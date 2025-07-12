@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极简留言板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        light: '#FCFBF5',
+                        dark: '#0F172A',
+                        neutral: '#F5F5F0',
+                        'neutral-dark': '#4A4A4A'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glassmorphism {
+                background: rgba(252, 251, 245, 0.9);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(200, 200, 200, 0.2);
+            }
+            .btn-primary {
+                @apply bg-primary text-white hover:bg-primary/90 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0;
+            }
+            .menu-transition {
+                @apply transition-all duration-300 ease-in-out transform;
+            }
+            .scale-in {
+                @apply scale-100 opacity-100;
+            }
+            .scale-out {
+                @apply scale-95 opacity-0 pointer-events-none;
+            }
+            .slide-down {
+                @apply translate-y-0 opacity-100;
+            }
+            .slide-up {
+                @apply -translate-y-4 opacity-0 pointer-events-none;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-light text-dark min-h-screen">
+    <!-- 导航栏 -->
+    <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 py-4 flex justify-end">
+            <button id="menuBtn" class="p-2 rounded-full hover:bg-primary/10 transition-colors duration-300">
+                <i class="fa fa-bars text-primary text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- 菜单 -->
+        <div id="menu" class="scale-out fixed top-16 right-4 bg-white rounded-xl shadow-xl overflow-hidden z-50">
+            <ul class="w-64">
+                <li>
+                    <button id="reasonBtn" class="w-full text-left px-6 py-4 hover:bg-neutral transition-colors flex items-center">
+                        <i class="fa fa-question-circle text-primary mr-3"></i>
+                        <span>为什么要做这个网站</span>
+                    </button>
+                </li>
+                <li>
+                    <button id="createBtn" class="w-full text-left px-6 py-4 hover:bg-neutral transition-colors flex items-center">
+                        <i class="fa fa-clone text-primary mr-3"></i>
+                        <span>我也想拥有类似网站</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-20 max-w-3xl pt-32">
+        <!-- 标题区域 -->
+        <div class="text-center mb-12">
+            <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold mb-4">极简留言板</h1>
+            <p class="text-neutral-dark max-w-xl mx-auto">欢迎在这匿名对我提出建议或意见🎉</p>
+            <p class="text-neutral-dark max-w-xl mx-auto">不管是“刺耳”甚至“扎心”的话，都请敞开来讲☺️</p>
+            <p class="text-neutral-dark max-w-xl mx-auto">请放心，除非你主动说明，否则我永远也不会知道你是谁🔒</p>
+        </div>
+        
+        <!-- 留言板 -->
+        <div class="glassmorphism p-6 md:p-8 rounded-2xl shadow-lg">
+            <form action="https://formspree.io/f/mvoenngy" method="post" class="space-y-6">
+                <div>
+                    <label for="name" class="block mb-2 text-sm font-medium text-neutral-dark">你是？（可不填）:</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa fa-user text-primary/70"></i>
+                        </div>
+                        <input type="text" id="name" name="name" placeholder="" class="w-full pl-10 pr-4 py-3 rounded-lg bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="message" class="block mb-2 text-sm font-medium text-neutral-dark">留言内容:</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 pt-3 flex items-start pointer-events-none">
+                            <i class="fa fa-pencil text-primary/70"></i>
+                        </div>
+                        <textarea id="message" name="message" required maxlength="10000" placeholder="请畅所欲言，尽量具体说明（如：直观感受+造成这个感受的事件或原因）" class="w-full pl-10 pr-4 py-3 rounded-lg bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors h-40 resize-none"></textarea>
+                    </div>
+                    <div class="flex justify-between items-center mt-2">
+                        <div class="text-xs text-neutral-dark/70">
+                            
+                        </div>
+                        <div class="text-xs text-neutral-dark/70">
+                            <span id="char-count">0</span>/10000
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary w-full py-3 rounded-lg font-medium flex items-center justify-center shadow-md">
+                    <i class="fa fa-paper-plane mr-2"></i>发送留言
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral py-6 mt-auto">
+        <div class="container mx-auto px-4 text-center text-neutral-dark/70 text-sm">
+        </div>
+    </footer>
+
+    <!-- 模态框背景 -->
+    <div id="modalBg" class="fixed inset-0 bg-dark/50 z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+    <!-- 为什么要做这个网站 模态框 -->
+    <div id="reasonModal" class="scale-out fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+                    <i class="fa fa-lightbulb-o text-primary text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">为什么要做这个网站</h3>
+                <p class="text-neutral-dark mb-6">只是突发奇想，想借这个匿名空间，听到平时藏在“没必要说出来伤和气”背后的真心话，有则改之，无则加勉。</p>
+                <button id="closeReasonModal" class="btn-primary px-6 py-3 rounded-lg font-medium">
+                    我知道了
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 我也想拥有类似网站 模态框 -->
+    <div id="createModal" class="scale-out fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+                    <i class="fa fa-rocket text-primary text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">我也想拥有类似网站</h3>
+                <p class="text-neutral-dark mb-6">若需要全部代码，可联系我免费获取☺️</p>
+                <button id="closeCreateModal" class="btn-primary px-6 py-3 rounded-lg font-medium">
+                    我知道了
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 留言字符计数
+        const messageInput = document.getElementById('message');
+        const charCount = document.getElementById('char-count');
+        
+        messageInput.addEventListener('input', function() {
+            const count = this.value.length;
+            charCount.textContent = count;
+            
+            if (count > 10000) {
+                this.value = this.value.substring(0, 10000);
+                charCount.textContent = 10000;
+                charCount.classList.add('text-red-500');
+            } else {
+                charCount.classList.remove('text-red-500');
+            }
+        });
+
+        // 菜单和模态框交互
+        const menuBtn = document.getElementById('menuBtn');
+        const menu = document.getElementById('menu');
+        const modalBg = document.getElementById('modalBg');
+        const reasonBtn = document.getElementById('reasonBtn');
+        const createBtn = document.getElementById('createBtn');
+        const reasonModal = document.getElementById('reasonModal');
+        const createModal = document.getElementById('createModal');
+        const closeReasonModal = document.getElementById('closeReasonModal');
+        const closeCreateModal = document.getElementById('closeCreateModal');
+
+        // 菜单切换
+        menuBtn.addEventListener('click', () => {
+            menu.classList.toggle('scale-in');
+            menu.classList.toggle('scale-out');
+        });
+
+        // 点击其他区域关闭菜单
+        document.addEventListener('click', (e) => {
+            if (!menuBtn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('scale-out');
+                menu.classList.remove('scale-in');
+            }
+        });
+
+        // 打开模态框函数
+        function openModal(modal) {
+            modalBg.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.remove('scale-out');
+            modal.classList.add('scale-in');
+            menu.classList.add('scale-out');
+            menu.classList.remove('scale-in');
+        }
+
+        // 关闭模态框函数
+        function closeModal(modal) {
+            modalBg.classList.add('opacity-0', 'pointer-events-none');
+            modal.classList.add('scale-out');
+            modal.classList.remove('scale-in');
+        }
+
+        // 模态框事件监听
+        reasonBtn.addEventListener('click', () => openModal(reasonModal));
+        createBtn.addEventListener('click', () => openModal(createModal));
+        closeReasonModal.addEventListener('click', () => closeModal(reasonModal));
+        closeCreateModal.addEventListener('click', () => closeModal(createModal));
+        modalBg.addEventListener('click', () => {
+            closeModal(reasonModal);
+            closeModal(createModal);
+        });
+    </script>
+</body>
+</html>
